@@ -1,9 +1,22 @@
 #include "song_runner.h"
 
-void song_setup(){
-  FPSerial.begin(9600, SERIAL_8N1, /*rx =*/BUZZER_SPEAKER_RX, /*tx =*/BUZZER_SPEAKER_TX);
-  delay(1000);
-  myDFPlayer.volume(SONG_VOLUME);  //Set volume value. From 0 to 30
+DFRobotDFPlayerMini myDFPlayer;
+
+void song_setup() {
+  FPSerial.begin(9600, SERIAL_8N1, BUZZER_SPEAKER_RX, BUZZER_SPEAKER_TX);
+  
+  // Laisser le temps au module de s'allumer
+  delay(2000); 
+
+  Serial.println(F("Initialisation du DFPlayer..."));
+  if (!myDFPlayer.begin(FPSerial)) {
+    Serial.println(F("Erreur : DFPlayer non détecté ! Vérifiez le câblage."));
+    // On ne continue pas si ça échoue pour éviter le crash
+    return; 
+  }
+  
+  myDFPlayer.volume(SONG_VOLUME);
+  Serial.println(F("DFPlayer prêt !"));
 }
 
 song_runner::song_runner(){

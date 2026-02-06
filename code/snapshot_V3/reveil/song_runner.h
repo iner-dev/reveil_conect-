@@ -7,8 +7,10 @@
 
 #define FPSerial Serial2
 
-DFRobotDFPlayerMini myDFPlayer;
+extern DFRobotDFPlayerMini myDFPlayer;
+
 void printDetail(uint8_t type, int value);
+
 void song_setup();
 #define SONG_SETUP_NEEDED
 
