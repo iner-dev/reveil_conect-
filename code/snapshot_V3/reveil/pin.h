@@ -1,7 +1,8 @@
 #ifndef PIN_H
 #define PIN_H
 
-#define BUZZER_PIN 13
+#define BUZZER_SPEAKER_RX 16
+#define BUZZER_SPEAKER_TX 17
 #define ERROR_LED_PIN 12
 #define LIGHT_PIN 25
 #define STOP_ALARM_PIN 15

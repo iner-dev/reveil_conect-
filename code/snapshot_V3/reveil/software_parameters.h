@@ -31,7 +31,7 @@
 
 // song parms
 
-#define NOTE_TIME 500
-#define MAX_BOUCLE 10
+#define MAX_PLAY_TIME 300000
+#define SONG_VOLUME 20 
 
 #endif

@@ -52,7 +52,7 @@ void debug(){
         case 'd' :
           WiFi.disconnect();
           Serial.println("disconnected");
-          break; 
+          break; /*
         case 'B' :
           tone(BUZZER_PIN,440);
           Serial.println("buzzer ON");
@@ -60,7 +60,7 @@ void debug(){
         case 'b' :
           noTone(BUZZER_PIN);
           Serial.println("buzzer OFF");
-          break; 
+          break; */
         case 'M' :
           digitalWrite(ERROR_LED_PIN,HIGH);
           Serial.println("error LED ON");
@@ -107,10 +107,12 @@ void setup() {
   pinMode(LIGHT_PIN,OUTPUT);
   digitalWrite(ERROR_LED_PIN,LOW);
   delay(1000); 
-  noTone(BUZZER_PIN);
   next_event.start = MAX_START_TIMESTAMP;
   next_event.end   = MAX_END_TIMESTAMP;
 
+  #ifdef SONG_SETUP_NEEDED
+    song_setup();
+  #endif
   #ifndef DEBUG
     while(!digitalRead(SOFT_RESET_PIN)) {
       delay(100);
@@ -133,7 +135,7 @@ void setup() {
 void loop() {
   #ifndef DEBUG
     now = time(nullptr);
-    
+    /*
     if(secret_mode){    // error led gestion
       digitalWrite(ERROR_LED_PIN,(int(millis()/SECRET_LED_FREQUANCY)%2==0));
       if(digitalRead(STOP_ALARM_PIN) && digitalRead(TEST_ALARM_PIN)){
@@ -143,7 +145,8 @@ void loop() {
         noTone(BUZZER_PIN);
         analogWrite(LIGHT_PIN, 0);
       }
-    }else if(!digitalRead(TEST_ALARM_PIN) && digitalRead(STOP_ALARM_PIN)){
+    }else */
+    if(!digitalRead(TEST_ALARM_PIN) && digitalRead(STOP_ALARM_PIN)){
       Serial.println("secret enable");
       secret_mode = true;
       music.stop();
