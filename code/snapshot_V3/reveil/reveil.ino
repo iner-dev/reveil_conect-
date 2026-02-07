@@ -98,6 +98,10 @@ void debug(){
 
 
 void setup() {
+  #ifdef SONG_SETUP_NEEDED
+    song_setup();
+  #endif
+  
   Serial.begin(115200);
   pinMode(STOP_ALARM_PIN,INPUT_PULLUP);
   pinMode(TEST_ALARM_PIN,INPUT_PULLUP);
@@ -110,9 +114,7 @@ void setup() {
   next_event.start = MAX_START_TIMESTAMP;
   next_event.end   = MAX_END_TIMESTAMP;
 
-  #ifdef SONG_SETUP_NEEDED
-    song_setup();
-  #endif
+  
   #ifndef DEBUG
     while(!digitalRead(SOFT_RESET_PIN)) {
       delay(100);

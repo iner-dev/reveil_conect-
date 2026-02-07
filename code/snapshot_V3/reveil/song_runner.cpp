@@ -1,45 +1,70 @@
 #include "song_runner.h"
+#include "pin.h"
 
+// Définition de l'objet global
 DFRobotDFPlayerMini myDFPlayer;
 
+// Le parachute : une variable pour savoir si on peut utiliser le module sans crash
+bool audioReady = false;
+
+song_runner::song_runner() {
+    t0 = 0;
+}
+
 void song_setup() {
-  FPSerial.begin(9600, SERIAL_8N1, BUZZER_SPEAKER_RX, BUZZER_SPEAKER_TX);
-  
-  // Laisser le temps au module de s'allumer
-  delay(2000); 
+    // Initialisation du port série 2 (Pins 16 et 17 comme dans votre test)
+    Serial2.begin(9600, SERIAL_8N1, 16, 17);
+    
+    Serial.println(F("--- Initialisation Audio ---"));
+    
+    // Délai de sécurité pour stabiliser l'alimentation
+    delay(2000); 
 
-  Serial.println(F("Initialisation du DFPlayer..."));
-  if (!myDFPlayer.begin(FPSerial)) {
-    Serial.println(F("Erreur : DFPlayer non détecté ! Vérifiez le câblage."));
-    // On ne continue pas si ça échoue pour éviter le crash
-    return; 
-  }
-  
-  myDFPlayer.volume(SONG_VOLUME);
-  Serial.println(F("DFPlayer prêt !"));
+    // Tentative d'initialisation
+    if (!myDFPlayer.begin(Serial2, true, true)) {
+        Serial.println(F("ERREUR : Le DFPlayer ne répond pas. Le parachute est ACTIF."));
+        audioReady = false; 
+        return; 
+    }
+
+    // Si on arrive ici, c'est que le module a répondu
+    audioReady = true;
+    myDFPlayer.volume(20);
+    Serial.println(F("Audio prêt et sécurisé !"));
 }
 
-song_runner::song_runner(){
-  //
+void song_runner::start() {
+    if (!audioReady) return; // Sécurité : on ne fait rien si pas initialisé
+
+    myDFPlayer.play(1);
+    t0 = millis();
+    Serial.println(F("Lecture lancée."));
 }
 
-void song_runner::start(){
-  myDFPlayer.loop(1);  //Loop the first mp3
-  t0 = millis();
+int song_runner::run() {
+    if (!audioReady) return 0; // Sécurité
+
+    // Exemple de logique pour arrêter après un certain temps (MAX_PLAY_TIME)
+    // Assurez-vous que MAX_PLAY_TIME est défini dans vos paramètres
+    if (t0 > 0 && (millis() - t0 > 30000)) { 
+        stop();
+    }
+    
+    return 0; // Toujours renvoyer une valeur pour éviter les erreurs de lien
 }
 
+void song_runner::stop() {
+    if (!audioReady) return; // Sécurité
 
-int song_runner::run(){
-  if(MAX_PLAY_TIME>(millis()-t0) && is_active()){
-    stop();
-  }
+    myDFPlayer.stop(); // .stop() est souvent plus stable que .sleep()
+    t0 = 0;
+    Serial.println(F("Lecture arrêtée."));
 }
 
+bool song_runner::is_active() {
+    if (!audioReady) return false; // Sécurité : évite d'interroger un module absent
 
-void song_runner::stop(){
-  myDFPlayer.sleep();  //pause the mp3
-}
-
-bool song_runner::is_active(){
-  return myDFPlayer.readState()==1;
+    // On vérifie l'état. Si le module renvoie une erreur (-1), on retourne false.
+    int s = myDFPlayer.readState();
+    return (s == 1); 
 }

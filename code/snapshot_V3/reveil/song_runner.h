@@ -1,30 +1,22 @@
 #ifndef SONG_RUNNER_H
 #define SONG_RUNNER_H
 #include <Arduino.h>
-#include "pin.h"
-#include "software_parameters.h"
 #include "DFRobotDFPlayerMini.h"
 
-#define FPSerial Serial2
-
-extern DFRobotDFPlayerMini myDFPlayer;
-
-void printDetail(uint8_t type, int value);
+// Déclaration pour que le .ino et le .cpp voient le même objet
+extern DFRobotDFPlayerMini myDFPlayer; 
 
 void song_setup();
 #define SONG_SETUP_NEEDED
 
-class song_runner{
+class song_runner {
   public:
-  song_runner();
-  void start();
-  int run();
-  void stop();
-  bool is_active();
+    song_runner();
+    void start();
+    void stop();
+    int run();
+    bool is_active();
   private:
-  unsigned long t0 = 0;
+    unsigned long t0 = 0;
 };
-
-
-
 #endif
