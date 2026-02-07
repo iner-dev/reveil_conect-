@@ -25,13 +25,13 @@
 
 //calendar parms
 #define max_event                    256
-#define SCAN_LENGHT                    7 //Days
+#define SCAN_LENGHT                    3 //Days
 #define MAX_START_TIMESTAMP  32503680000 //S
 #define MAX_END_TIMESTAMP    32503680001 //S
 
 // song parms
 
 #define MAX_PLAY_TIME 300000
-#define SONG_VOLUME 20 
+#define SONG_VOLUME 10 
 
 #endif

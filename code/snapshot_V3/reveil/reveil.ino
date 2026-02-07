@@ -137,17 +137,16 @@ void setup() {
 void loop() {
   #ifndef DEBUG
     now = time(nullptr);
-    /*
+    //*
     if(secret_mode){    // error led gestion
       digitalWrite(ERROR_LED_PIN,(int(millis()/SECRET_LED_FREQUANCY)%2==0));
       if(digitalRead(STOP_ALARM_PIN) && digitalRead(TEST_ALARM_PIN)){
-        tone(BUZZER_PIN,440);
+        music.Secret_Mode();
         analogWrite(LIGHT_PIN, 255);
       }else{
-        noTone(BUZZER_PIN);
         analogWrite(LIGHT_PIN, 0);
       }
-    }else */
+    }else /**/
     if(!digitalRead(TEST_ALARM_PIN) && digitalRead(STOP_ALARM_PIN)){
       Serial.println("secret enable");
       secret_mode = true;
@@ -158,7 +157,7 @@ void loop() {
   
     if(!music.is_active()){
       if(next_event.end<now){  // alarm starting time
-        if (updated) next_event = gcal.next_event_named_after("reveil",now);
+        next_event = gcal.next_event_named_after("reveil",now);
         Serial.println("waking up buddy");
         music.start();
         digitalWrite(LIGHT_PIN,HIGH);
@@ -169,6 +168,7 @@ void loop() {
     
     if(secret_mode && !digitalRead(UPDATE_PIN)){ // secret mod disabling 
       secret_mode = false;
+      music.End_Secret_Mode();
       if (updated) next_event = gcal.next_event_named_after("reveil",now);
       while(!digitalRead(UPDATE_PIN))delay(100);
       digitalWrite(ERROR_LED_PIN,LOW);
