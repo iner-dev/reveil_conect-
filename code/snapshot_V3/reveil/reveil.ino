@@ -52,15 +52,16 @@ void debug(){
         case 'd' :
           WiFi.disconnect();
           Serial.println("disconnected");
-          break; /*
-        case 'B' :
-          tone(BUZZER_PIN,440);
-          Serial.println("buzzer ON");
+          break; //*
+        case 'S' :
+          music.Secret_Mode();
+          Serial.println("Speaker ON");
           break; 
-        case 'b' :
-          noTone(BUZZER_PIN);
-          Serial.println("buzzer OFF");
-          break; */
+        case 's' :
+          music.End_Secret_Mode();
+          music.stop();
+          Serial.println("Speaker OFF");
+          break; /**/
         case 'M' :
           digitalWrite(ERROR_LED_PIN,HIGH);
           Serial.println("error LED ON");
@@ -95,7 +96,6 @@ void debug(){
   }
   Serial.println("Debug mode Disable");
 }
-
 
 void setup() {
   #ifdef SONG_SETUP_NEEDED
@@ -132,8 +132,6 @@ void setup() {
   #endif
 }
 
-
-
 void loop() {
   #ifndef DEBUG
     now = time(nullptr);
@@ -155,7 +153,7 @@ void loop() {
       digitalWrite(ERROR_LED_PIN,(int(millis()/ERROR_LED_FREQUANCY)%2==0));
     }
   
-    if(!music.is_active()){
+    if(!music.is_active() && !secret_mode){
       if(next_event.end<now){  // alarm starting time
         next_event = gcal.next_event_named_after("reveil",now);
         Serial.println("waking up buddy");

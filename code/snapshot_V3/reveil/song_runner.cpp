@@ -42,7 +42,7 @@ void song_runner::start() {
 
 int song_runner::Secret_Mode(){
     if (!audioReady) return 0; // Sécurité
-    myDFPlayer.volume(30);
+    myDFPlayer.volume(SECRET_VOLUME);
     myDFPlayer.advertise(1);
 }
 int song_runner::End_Secret_Mode(){

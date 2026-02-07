@@ -11,7 +11,7 @@ char* defaultTimezone = TIME_ZONE;
 #define ONE_HOUR 3600 // From the provided header
 
 time_t parseCustomTime(String timeString) {
-  Serial.println("parsing "+timeString);
+  //Serial.println("parsing "+timeString);
   struct tm tm_struct = {0}; // Initialize all fields to zero
 
   if (timeString.substring(0,2) == "TZ"){
