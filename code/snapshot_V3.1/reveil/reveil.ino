@@ -34,7 +34,7 @@ void update(){
   }
   last_update = now;
   Serial.println("next event at "+String(next_alarm_event.end)+"UTC in "+String(next_alarm_event.end-now)+"sec");
-  Serial.println("next alert at "+String(next_alert_event.end)+"UTC in "+String(next_alert_event.end-now)+"sec");
+  Serial.println("next alert at "+String(next_alert_event.start)+"UTC in "+String(next_alert_event.start-now)+"sec");
   Serial.println("next reboot at "+String(reboot_time)+"UTC in "+String(reboot_time-now)+"sec");
   digitalWrite(ERROR_LED_PIN,LOW);
 }
@@ -61,7 +61,7 @@ void debug(){
         case 'A' :
           next_alert_event.start = now+TEST_LIGHT_TIME;
           next_alert_event.end = now+TEST_LIGHT_TIME;
-          next_alert_event.description = "1";
+          next_alert_event.description = "0";
           Serial.println("Testing");
           break;
         case 'd' :
@@ -101,6 +101,8 @@ void debug(){
           break; 
         case 'N' :
           Serial.println("next event at "+String(next_alarm_event.end)+"UTC in "+String(next_alarm_event.end-now)+"sec");
+          Serial.println("next alert at "+String(next_alert_event.start)+"UTC in "+String(next_alert_event.start-now)+"sec");
+          Serial.println("next reboot at "+String(reboot_time)+"UTC in "+String(reboot_time-now)+"sec");
           break; 
       }
     }
@@ -154,7 +156,7 @@ void loop() {
     if(secret_mode){    // error led gestion
       digitalWrite(ERROR_LED_PIN,(int(millis()/SECRET_LED_FREQUANCY)%2==0));
       if(digitalRead(STOP_ALARM_PIN) && digitalRead(TEST_ALARM_PIN)){
-        music.Alert(1);
+        music.Alert(69);
         analogWrite(LIGHT_PIN, 255);
       }else{
         analogWrite(LIGHT_PIN, 0);
