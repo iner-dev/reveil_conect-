@@ -19,6 +19,7 @@ class event{
   String UID;
   time_t start;
   time_t end;
+  String description = "";
   private:
 };
 

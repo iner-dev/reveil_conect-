@@ -18,8 +18,8 @@ class song_runner {
     void start();
     void stop();
     int run();
-    int Secret_Mode();
-    int End_Secret_Mode();
+    int Alert(int ID);
+    int End_Alert();
     bool is_active();
   private:
     unsigned long t0 = 0;

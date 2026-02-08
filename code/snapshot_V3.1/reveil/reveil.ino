@@ -7,7 +7,9 @@
 
 calendar gcal(Ical_URL);
 song_runner music;
-event next_event;
+event next_alarm_event;
+event next_alert_event;
+int alert_id=0;
 time_t last_update;
 time_t now;
 time_t reboot_time = 3600;
@@ -26,11 +28,13 @@ void update(){
   updated = gcal.update();
   now = time(nullptr);
   if (updated){
-    next_event = gcal.next_event_named_after("reveil",now-UPDATE_GETTING_OFFSET);
+    next_alarm_event = gcal.next_event_named_after("reveil",now-UPDATE_GETTING_OFFSET);
+    next_alert_event = gcal.next_event_named_after("alert",now-UPDATE_GETTING_OFFSET);
     reboot_time = gcal.next_event_named_after("reboot",now-UPDATE_GETTING_OFFSET).start;
   }
   last_update = now;
-  Serial.println("next event at "+String(next_event.end)+"UTC in "+String(next_event.end-now)+"sec");
+  Serial.println("next event at "+String(next_alarm_event.end)+"UTC in "+String(next_alarm_event.end-now)+"sec");
+  Serial.println("next alert at "+String(next_alert_event.end)+"UTC in "+String(next_alert_event.end-now)+"sec");
   Serial.println("next reboot at "+String(reboot_time)+"UTC in "+String(reboot_time-now)+"sec");
   digitalWrite(ERROR_LED_PIN,LOW);
 }
@@ -49,16 +53,27 @@ void debug(){
         case 'E' :
           debug_mode = false;
           break; 
+        case 'T' :
+          next_alarm_event.start = now;
+          next_alarm_event.end = now+TEST_LIGHT_TIME;
+          Serial.println("Testing");
+          break;
+        case 'A' :
+          next_alert_event.start = now+TEST_LIGHT_TIME;
+          next_alert_event.end = now+TEST_LIGHT_TIME;
+          next_alert_event.description = "1";
+          Serial.println("Testing");
+          break;
         case 'd' :
           WiFi.disconnect();
           Serial.println("disconnected");
           break; //*
         case 'S' :
-          music.Secret_Mode();
+          music.Alert(1);
           Serial.println("Speaker ON");
           break; 
         case 's' :
-          music.End_Secret_Mode();
+          music.End_Alert();
           music.stop();
           Serial.println("Speaker OFF");
           break; /**/
@@ -85,7 +100,7 @@ void debug(){
           update();
           break; 
         case 'N' :
-          Serial.println("next event at "+String(next_event.end)+"UTC in "+String(next_event.end-now)+"sec");
+          Serial.println("next event at "+String(next_alarm_event.end)+"UTC in "+String(next_alarm_event.end-now)+"sec");
           break; 
       }
     }
@@ -111,8 +126,8 @@ void setup() {
   pinMode(LIGHT_PIN,OUTPUT);
   digitalWrite(ERROR_LED_PIN,LOW);
   delay(1000); 
-  next_event.start = MAX_START_TIMESTAMP;
-  next_event.end   = MAX_END_TIMESTAMP;
+  next_alarm_event.start = MAX_START_TIMESTAMP;
+  next_alarm_event.end   = MAX_END_TIMESTAMP;
 
   
   #ifndef DEBUG
@@ -139,7 +154,7 @@ void loop() {
     if(secret_mode){    // error led gestion
       digitalWrite(ERROR_LED_PIN,(int(millis()/SECRET_LED_FREQUANCY)%2==0));
       if(digitalRead(STOP_ALARM_PIN) && digitalRead(TEST_ALARM_PIN)){
-        music.Secret_Mode();
+        music.Alert(1);
         analogWrite(LIGHT_PIN, 255);
       }else{
         analogWrite(LIGHT_PIN, 0);
@@ -154,41 +169,46 @@ void loop() {
     }
   
     if(!music.is_active() && !secret_mode){
-      if(next_event.end<now){  // alarm starting time
-        next_event = gcal.next_event_named_after("reveil",now);
+      if(next_alarm_event.end<now){  // alarm starting time
+        next_alarm_event = gcal.next_event_named_after("reveil",now);
         Serial.println("waking up buddy");
         music.start();
         digitalWrite(LIGHT_PIN,HIGH);
-      }else if(next_event.start < now){
-        analogWrite(LIGHT_PIN, int(((now-next_event.start)*255)/(next_event.end-next_event.start)) );
+      }else if(next_alarm_event.start < now){
+        analogWrite(LIGHT_PIN, int(((now-next_alarm_event.start)*255)/(next_alarm_event.end-next_alarm_event.start)) );
+      }else if(next_alert_event.start<now){
+        if(next_alert_event.description!="") alert_id = next_alert_event.description.toInt();
+        else alert_id = 0;
+        music.Alert(alert_id);
+        next_alert_event = gcal.next_event_named_after("alert",now);
       }
     }
     
     if(secret_mode && !digitalRead(UPDATE_PIN)){ // secret mod disabling 
       secret_mode = false;
-      music.End_Secret_Mode();
-      if (updated) next_event = gcal.next_event_named_after("reveil",now);
+      music.End_Alert();
+      if (updated) next_alarm_event = gcal.next_event_named_after("reveil",now);
       while(!digitalRead(UPDATE_PIN))delay(100);
       digitalWrite(ERROR_LED_PIN,LOW);
       analogWrite(LIGHT_PIN, 0);
     }
   
     
-    if(( ((  (((last_update+UPDATE_MIN_DELAY_NORMAL) <now)&&updated )||(((last_update+UPDATE_MIN_DELAY_ERROR)<now)&&!updated )  )&& ((next_event.start-UPDATE_EVENT_LOCK_DELAY)>now)) ) || (!secret_mode && !digitalRead(UPDATE_PIN))){  // updating 
+    if(( ((  (((last_update+UPDATE_MIN_DELAY_NORMAL) <now)&&updated )||(((last_update+UPDATE_MIN_DELAY_ERROR)<now)&&!updated )  )&& ((next_alarm_event.start-UPDATE_EVENT_LOCK_DELAY)>now)) ) || (!secret_mode && !digitalRead(UPDATE_PIN))){  // updating 
       update();
     }//*/
   
     
     if(digitalRead(STOP_ALARM_PIN)&&!secret_mode){ // alarm stoping
-      if (updated) next_event = gcal.next_event_named_after("reveil",now);
+      if (updated) next_alarm_event = gcal.next_event_named_after("reveil",now);
       if (music.is_active()) music.stop();
       analogWrite(LIGHT_PIN, 0);
     }
   
     
     if(!digitalRead(TEST_ALARM_PIN) && !music.is_active() && !secret_mode){
-      next_event.start = now;
-      next_event.end = now+TEST_LIGHT_TIME;
+      next_alarm_event.start = now;
+      next_alarm_event.end = now+TEST_LIGHT_TIME;
     }
     if(!digitalRead(SOFT_RESET_PIN) or now>reboot_time){
       reset();

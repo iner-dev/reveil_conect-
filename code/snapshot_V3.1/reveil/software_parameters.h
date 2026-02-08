@@ -33,6 +33,6 @@
 
 #define MAX_PLAY_TIME 300000
 #define SONG_VOLUME 10 
-#define SECRET_VOLUME 25
+#define ALERT_VOLUME 25
 
 #endif

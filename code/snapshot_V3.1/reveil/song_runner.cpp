@@ -40,12 +40,12 @@ void song_runner::start() {
     Serial.println(F("Lecture lancée."));
 }
 
-int song_runner::Secret_Mode(){
+int song_runner::Alert(int ID){
     if (!audioReady) return 0; // Sécurité
-    myDFPlayer.volume(SECRET_VOLUME);
-    myDFPlayer.advertise(1);
+    myDFPlayer.volume(ALERT_VOLUME);
+    myDFPlayer.advertise(ID);
 }
-int song_runner::End_Secret_Mode(){
+int song_runner::End_Alert(){
     if (!audioReady) return 0; // Sécurité
     myDFPlayer.stopAdvertise();
     myDFPlayer.volume(SONG_VOLUME);

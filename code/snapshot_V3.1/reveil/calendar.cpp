@@ -162,6 +162,7 @@ void calendar::generate_recurcive_event_betwin(time_t min_time,time_t max_time){
         all_events[event_number].UID = UID;
         all_events[event_number].start = event_start_time;
         all_events[event_number].end = event_end_time;
+        if(ical_event.indexOf("DESCRIPTION")!=-1) all_events[event_number].description = get_data_from_event("DESCRIPTION",1);
         event_number++;
         //if(get_data_from_event("SUMMARY",1).equals("reveil")) Serial.println("added at "+String(event_start_time)); //debug
       }//else Serial.println("there is an exeption");                                                                 //debug
@@ -191,6 +192,7 @@ void calendar::generate_single_event_betwin(time_t min_time,time_t max_time){
           all_events[event_number].UID = UID;
           all_events[event_number].start = event_start_time;
           all_events[event_number].end = event_end_time;
+          if(ical_event.indexOf("DESCRIPTION")!=-1) all_events[event_number].description = get_data_from_event("DESCRIPTION",1);
           event_number++;
         }
       }else{
@@ -208,6 +210,7 @@ void calendar::generate_single_event_betwin(time_t min_time,time_t max_time){
         all_events[search_event_id].UID = UID;
         all_events[search_event_id].start = event_start_time;
         all_events[search_event_id].end = event_end_time;
+        if(ical_event.indexOf("DESCRIPTION")!=-1) all_events[search_event_id].description = get_data_from_event("DESCRIPTION",1);
       }
     }
 }
