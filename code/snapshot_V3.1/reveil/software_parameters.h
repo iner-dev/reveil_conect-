@@ -10,7 +10,8 @@
 #define UPDATE_EVENT_LOCK_DELAY    60   //  S
 #define UPDATE_GETTING_OFFSET       0   //  S
 #define TEST_LIGHT_TIME             5   //  S
-#define REFRESH_DELAY              10   //  ms
+#define REFRESH_DELAY             100   //  ms
+#define DFPlayer_REFRESH_DELAY    500   //  ms
 #define ERROR_LED_FREQUANCY       200   //  ms
 #define SECRET_LED_FREQUANCY      500   //  ms
 

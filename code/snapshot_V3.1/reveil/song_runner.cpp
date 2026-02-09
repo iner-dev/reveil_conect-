@@ -53,6 +53,7 @@ int song_runner::End_Alert(){
 
 
 int song_runner::run() {
+    static unsigned long lastCheckTime = 0;
     if (!audioReady) return 0; // Sécurité
 
     // Exemple de logique pour arrêter après un certain temps (MAX_PLAY_TIME)
@@ -60,10 +61,14 @@ int song_runner::run() {
     if (t0 > 0 && (millis() - t0 > MAX_PLAY_TIME)) { 
         stop();
     }
-    /*
-    if (myDFPlayer.available()) {
-      printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-    }/**/
+    //*
+    if (millis() - lastCheckTime > DFPlayer_REFRESH_DELAY) {
+        if (myDFPlayer.available()) {
+          printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+        }
+        lastCheckTime = millis();
+    }
+    /**/
     
     return 0; // Toujours renvoyer une valeur pour éviter les erreurs de lien
 }
@@ -77,11 +82,20 @@ void song_runner::stop() {
 }
 
 bool song_runner::is_active() {
+    static unsigned long lastCheckTime = 0;
+    static bool lastKnownState = false;
     if (!audioReady) return false; // Sécurité : évite d'interroger un module absent
-
-    // On vérifie l'état. Si le module renvoie une erreur (-1), on retourne false.
-    int s = myDFPlayer.readState();
-    return (s == 1); 
+    if (millis() - lastCheckTime > DFPlayer_REFRESH_DELAY) {
+        if (!audioReady) return false;
+        
+        int s = myDFPlayer.readState();
+        if (s != -1) { // Si la réponse est valide
+            lastKnownState = (s == 1);
+        }
+        lastCheckTime = millis();
+        // Serial.println("ACT Check real query"); // Garde le log ici pour debugger si besoin
+    }
+    return lastKnownState;
 }
 
 

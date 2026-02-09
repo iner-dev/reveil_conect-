@@ -61,7 +61,7 @@ void debug(){
         case 'A' :
           next_alert_event.start = now+TEST_LIGHT_TIME;
           next_alert_event.end = now+TEST_LIGHT_TIME;
-          next_alert_event.description = "0";
+          next_alert_event.description = "2";
           Serial.println("Testing");
           break;
         case 'd' :
@@ -69,7 +69,7 @@ void debug(){
           Serial.println("disconnected");
           break; //*
         case 'S' :
-          music.Alert(1);
+          music.Alert(2);
           Serial.println("Speaker ON");
           break; 
         case 's' :
@@ -131,7 +131,7 @@ void setup() {
   next_alarm_event.start = MAX_START_TIMESTAMP;
   next_alarm_event.end   = MAX_END_TIMESTAMP;
 
-  
+  attachInterrupt(SOFT_RESET_PIN, reset, LOW);
   #ifndef DEBUG
     while(!digitalRead(SOFT_RESET_PIN)) {
       delay(100);
@@ -171,6 +171,7 @@ void loop() {
     }
   
     if(!music.is_active() && !secret_mode){
+      
       if(next_alarm_event.end<now){  // alarm starting time
         next_alarm_event = gcal.next_event_named_after("reveil",now);
         Serial.println("waking up buddy");
@@ -221,6 +222,8 @@ void loop() {
       }
     }
     music.run(); 
+    
+    
   #endif
   #ifdef DEBUG
     // execution de debogage
