@@ -9,7 +9,7 @@ calendar gcal(Ical_URL);
 song_runner music;
 event next_alarm_event;
 event next_alert_event;
-int alert_id=0;
+int alert_id=1;
 time_t last_update;
 time_t now;
 time_t reboot_time = 3600;
@@ -180,7 +180,7 @@ void loop() {
         analogWrite(LIGHT_PIN, int(((now-next_alarm_event.start)*255)/(next_alarm_event.end-next_alarm_event.start)) );
       }else if(next_alert_event.start<now){
         if(next_alert_event.description!="") alert_id = next_alert_event.description.toInt();
-        else alert_id = 0;
+        else alert_id = 1;
         music.Alert(alert_id);
         next_alert_event = gcal.next_event_named_after("alert",now);
       }
