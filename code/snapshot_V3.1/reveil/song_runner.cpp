@@ -34,6 +34,7 @@ void song_setup() {
 
 void song_runner::start() {
     if (!audioReady) return; // Sécurité : on ne fait rien si pas initialisé
+    myDFPlayer.volume(SONG_VOLUME);
 
     myDFPlayer.loopFolder(01);
     t0 = millis();
