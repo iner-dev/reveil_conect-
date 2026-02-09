@@ -115,6 +115,7 @@ void debug(){
 }
 
 void setup() {
+  delay(5000);
   #ifdef SONG_SETUP_NEEDED
     song_setup();
   #endif
@@ -151,6 +152,7 @@ void setup() {
 
 void loop() {
   #ifndef DEBUG
+    Serial.println("LOOP 1");
     now = time(nullptr);
     //*
     if(secret_mode){    // error led gestion
@@ -195,6 +197,7 @@ void loop() {
       digitalWrite(ERROR_LED_PIN,LOW);
       analogWrite(LIGHT_PIN, 0);
     }
+    Serial.println("LOOP 2");
   
     
     if(( ((  (((last_update+UPDATE_MIN_DELAY_NORMAL) <now)&&updated )||(((last_update+UPDATE_MIN_DELAY_ERROR)<now)&&!updated )  )&& ((next_alarm_event.start-UPDATE_EVENT_LOCK_DELAY)>now)) ) || (!secret_mode && !digitalRead(UPDATE_PIN))){  // updating 
@@ -207,6 +210,7 @@ void loop() {
       if (music.is_active()) music.stop();
       analogWrite(LIGHT_PIN, 0);
     }
+    Serial.println("LOOP 3");
   
     
     if(!digitalRead(TEST_ALARM_PIN) && !music.is_active() && !secret_mode){
