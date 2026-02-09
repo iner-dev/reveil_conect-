@@ -61,7 +61,7 @@ int song_runner::run() {
     if (t0 > 0 && (millis() - t0 > MAX_PLAY_TIME)) { 
         stop();
     }
-    //*
+    /*
     if (millis() - lastCheckTime > DFPlayer_REFRESH_DELAY) {
         if (myDFPlayer.available()) {
           printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
