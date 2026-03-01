@@ -254,6 +254,7 @@ void calendar::generate_events(){
 
 bool calendar::update(){
   // Initialisation de l'heure NTP
+  //return false; // création de faux update bug
   Serial.println("");
   if(WiFi.status() != WL_CONNECTED) if(!init_WiFi()) return false ;
   bool ret = update_Ical();

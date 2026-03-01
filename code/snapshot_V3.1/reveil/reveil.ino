@@ -4,6 +4,7 @@
 #include "software_parameters.h"
 
 //#define DEBUG
+//#define STATE_PRINT
 
 calendar gcal(Ical_URL);
 song_runner music;
@@ -115,22 +116,19 @@ void debug(){
 }
 
 void setup() {
-  delay(5000);
-  #ifdef SONG_SETUP_NEEDED
-    song_setup();
-  #endif
-  
-  Serial.begin(115200);
   pinMode(STOP_ALARM_PIN,INPUT_PULLUP);
   pinMode(TEST_ALARM_PIN,INPUT_PULLUP);
   pinMode(UPDATE_PIN,INPUT_PULLUP);
   pinMode(SOFT_RESET_PIN,INPUT_PULLUP);
   pinMode(ERROR_LED_PIN,OUTPUT);
   pinMode(LIGHT_PIN,OUTPUT);
-  digitalWrite(ERROR_LED_PIN,LOW);
-  delay(1000); 
+  digitalWrite(ERROR_LED_PIN,HIGH);  
+  delay(2500); 
+  Serial.begin(115200);
   next_alarm_event.start = MAX_START_TIMESTAMP;
   next_alarm_event.end   = MAX_END_TIMESTAMP;
+  next_alert_event.start = MAX_START_TIMESTAMP;
+  next_alert_event.end   = MAX_END_TIMESTAMP;
 
   attachInterrupt(SOFT_RESET_PIN, reset, LOW);
   #ifndef DEBUG
@@ -140,6 +138,9 @@ void setup() {
     }
     digitalWrite(ERROR_LED_PIN,HIGH);
     
+    #ifdef SONG_SETUP_NEEDED
+      song_setup();
+    #endif
     update();
   
     Serial.println("Booted");
@@ -152,7 +153,9 @@ void setup() {
 
 void loop() {
   #ifndef DEBUG
+    #ifdef STATE_PRINT
     Serial.println("LOOP 1");
+    #endif
     now = time(nullptr);
     //*
     if(secret_mode){    // error led gestion
@@ -197,7 +200,9 @@ void loop() {
       digitalWrite(ERROR_LED_PIN,LOW);
       analogWrite(LIGHT_PIN, 0);
     }
+    #ifdef STATE_PRINT
     Serial.println("LOOP 2");
+    #endif
   
     
     if(( ((  (((last_update+UPDATE_MIN_DELAY_NORMAL) <now)&&updated )||(((last_update+UPDATE_MIN_DELAY_ERROR)<now)&&!updated )  )&& ((next_alarm_event.start-UPDATE_EVENT_LOCK_DELAY)>now)) ) || (!secret_mode && !digitalRead(UPDATE_PIN))){  // updating 
@@ -210,7 +215,9 @@ void loop() {
       if (music.is_active()) music.stop();
       analogWrite(LIGHT_PIN, 0);
     }
+    #ifdef STATE_PRINT
     Serial.println("LOOP 3");
+    #endif
   
     
     if(!digitalRead(TEST_ALARM_PIN) && !music.is_active() && !secret_mode){
