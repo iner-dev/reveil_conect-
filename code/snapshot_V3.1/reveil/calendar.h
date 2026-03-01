@@ -11,7 +11,7 @@ time_t parseCustomTime(String timeString);
 char* to_char(String str);
 const time_t aDay = 24 * 3600;
 
-class event{
+struct event{
   public:
   event();
   void serial_dump();

@@ -46,17 +46,18 @@ time_t parseCustomTime(String timeString) {
 }
 
 
-
+//*
 
 event::event(){}
 
 void event::serial_dump(){
-  Serial.println("name  = "+name);
-  Serial.println("UID   = "+UID);
-  Serial.println("start = "+String(start));
-  Serial.println("end   = "+String(end));
+  Serial.println("name          = "+name);
+  Serial.println("UID           = "+UID);
+  Serial.println("start         = "+String(start));
+  Serial.println("end           = "+String(end));
+  Serial.println("description   = "+description);
 }
-
+//*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
