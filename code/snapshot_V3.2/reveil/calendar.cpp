@@ -288,7 +288,7 @@ event calendar::next_event_named_after(String event_name,time_t T){
 }
 
 bool calendar::init_WiFi(){
-  WIFI_mgr->try_connect();
+  return WIFI_mgr->try_connect();
 }
 
 void calendar::serial_dump(){

@@ -1,6 +1,6 @@
 #include "multi_wifi.h"
 
-int WIFI_manager::try_connect() {
+bool WIFI_manager::try_connect() {
     // Reset to start if we are at the end or out of bounds
     if (wifi_id >= wifi_len) wifi_id = 0;
 
@@ -14,7 +14,7 @@ int WIFI_manager::try_connect() {
     return false; // None of the networks worked
 }
 
-int WIFI_manager::try_one_connect(){
+bool WIFI_manager::try_one_connect(){
   WiFi.disconnect(true); // Shut down WiFi fully
     WiFi.mode(WIFI_STA);   // Explicitly set Station mode
     delay(100);

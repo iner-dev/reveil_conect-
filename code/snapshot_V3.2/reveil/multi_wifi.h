@@ -11,10 +11,10 @@ struct wifi{
 
 class WIFI_manager{
 public:
-    int try_connect();
+    bool try_connect();
     void add_wifi(String SSID, String PSW);
 private:
-    int try_one_connect();
+    bool try_one_connect();
     wifi wifi_list[max_wifi];
     int wifi_id = 0;
     int wifi_len = 0;
