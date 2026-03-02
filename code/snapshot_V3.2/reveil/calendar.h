@@ -2,7 +2,7 @@
 #define CALENDAR_H
 #include <Arduino.h>
 #include "software_parameters.h"
-#include <WiFi.h>
+#include "multi_wifi.h"
 #include <HTTPClient.h>
 #include <time.h>
 
@@ -23,10 +23,11 @@ struct event{
   private:
 };
 
+
 class calendar{
   public:
   
-  calendar(char* icalUrl_input );
+  calendar(char* icalUrl_input,WIFI_manager *WIFI_mgr_input);
   bool update();
   event next_event_named_after(String event_name,time_t T);
   void serial_dump();
@@ -44,6 +45,7 @@ class calendar{
   event all_events[max_event];
   int event_number;
   String get_data_from_event(String id,int N);
+  WIFI_manager *WIFI_mgr;
 };
 
 #endif

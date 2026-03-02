@@ -2,11 +2,13 @@
 #include "song_runner.h"
 #include "pin.h"
 #include "software_parameters.h"
+#include "multi_wifi.h"
 
 //#define DEBUG
 //#define STATE_PRINT
 
-calendar gcal(Ical_URL);
+WIFI_manager WIFI_mgr;
+calendar gcal(Ical_URL,&WIFI_mgr);
 song_runner music;
 event next_alarm_event;
 event next_alert_event;
@@ -129,6 +131,8 @@ void setup() {
   next_alarm_event.end   = MAX_END_TIMESTAMP;
   next_alert_event.start = MAX_START_TIMESTAMP;
   next_alert_event.end   = MAX_END_TIMESTAMP;
+  
+  define_wifi(&WIFI_mgr);
 
   attachInterrupt(SOFT_RESET_PIN, reset, LOW);
   #ifndef DEBUG

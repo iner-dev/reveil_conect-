@@ -1,9 +1,5 @@
 #include "calendar.h"
 
-// --- Configuration WiFi ---
-const char* ssid = WIFI_SSID;
-const char* password = WIFI_PSW;
-
 // --- Configuration du temps (NTP) ---
 const char* ntpServer = NTP_SERVER_ADDRESS;
 char* defaultTimezone = TIME_ZONE;
@@ -292,22 +288,7 @@ event calendar::next_event_named_after(String event_name,time_t T){
 }
 
 bool calendar::init_WiFi(){
-  long T0 = millis();
-  // Connexion WiFi
-  Serial.print("Connexion a ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED && (millis()-T0)<10000) {
-    delay(500);
-    Serial.print(".");
-  }
-  if(WiFi.status() == WL_CONNECTED){
-    Serial.println("\nWiFi connecte !");
-    Serial.print("Adresse IP : ");
-    Serial.println(WiFi.localIP());
-  }else Serial.println("\nWiFi time out error");
-  return WiFi.status() == WL_CONNECTED;
+  WIFI_mgr->try_connect();
 }
 
 void calendar::serial_dump(){
@@ -318,6 +299,7 @@ void calendar::serial_dump(){
   }
 }
 
-calendar::calendar(char* icalUrl_input){
+calendar::calendar(char* icalUrl_input,WIFI_manager *WIFI_mgr_input){
   icalUrl = icalUrl_input;
+  WIFI_mgr = WIFI_mgr_input;
 }
