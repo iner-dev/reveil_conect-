@@ -25,7 +25,7 @@
 #define AUTO_DISCONNECT // active l'arret automatique du WiFi lors qu'il ne se met pas a jours 
 
 //calendar parms
-#define max_event                    256
+#define max_event                     64
 #define SCAN_LENGHT                    3 //Days
 #define MAX_START_TIMESTAMP  32503680000 //S
 #define MAX_END_TIMESTAMP    32503680001 //S
